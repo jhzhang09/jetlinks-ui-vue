@@ -174,6 +174,10 @@ export const useMenuStore = defineStore('menu', () => {
             const extraMenu = await getExtraRouters()
 
             const routes = handleMenus(cloneDeep(menuResult), extraMenu, asyncRoutes) // 处理路由
+
+            routes.push(USER_CENTER_ROUTE) // 添加个人中心
+            routes.push(INIT_HOME)
+
             if (routes.length) {
                 routes.push({
                     path: '/',
@@ -181,8 +185,6 @@ export const useMenuStore = defineStore('menu', () => {
                 })
             }
 
-            routes.push(USER_CENTER_ROUTE) // 添加个人中心
-            routes.push(INIT_HOME)
             authStore.handlePermission(menuResult) // 处理按钮权限
             menu.value = routes
             console.log('routes', routes)

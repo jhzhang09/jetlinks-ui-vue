@@ -18,8 +18,8 @@
         :maskClosable="false"
         @cancel="cancel"
         @ok="handelSave"
-        :okText="$t('ave.index.551009-0')"
-        :cancelText="$t('ave.index.551009-1')"
+        :okText="$t('Save.index.551009-0')"
+        :cancelText="$t('Save.index.551009-1')"
         class="modal-style"
     >
         <div class="data-content">
