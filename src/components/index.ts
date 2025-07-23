@@ -18,7 +18,7 @@ import { TimeSelect } from './Dashboard/components'
 import FullCalendar from './FullCalendar/index.vue'
 import Image from './Image/index.vue'
 import VirtualScroll from './VirtualScroll/index.vue'
-
+import TabsCard from './TabsCard/index.vue'
 export default {
     install(app: App) {
 
@@ -42,6 +42,7 @@ export default {
           .component('FullCalendar', FullCalendar)
           .component('Image', Image)
           .component('VirtualScroll', VirtualScroll)
+          .component('TabsCard', TabsCard)
 
         Object.keys(FormItemValue).forEach(key => {
             app.component(key, FormItemValue[key])

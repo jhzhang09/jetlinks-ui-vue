@@ -3,7 +3,7 @@
         :style="props.style || { width: '100%', height: '100%' }"
         :class="props.class"
     >
-        <el-amap v-if="amapKey" :zooms="[3, 20]" @init="initMap" ref="mapRef">
+        <el-amap v-if="amapKey" :zooms="[3, 20]" @init="initMap" ref="mapRef" :center="center">
             <template v-if="isOpenUi">
                 <template v-if="uiLoading">
                     <slot></slot>
