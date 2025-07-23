@@ -147,6 +147,7 @@
                                                 ]
                                             "
                                             :itemType="item.type"
+                                            :options="item.options"
                                         />
                                     </j-form-item>
                                 </template>
@@ -280,6 +281,23 @@ const getRules = (item: any) => {
     return rules;
 };
 
+const handleOptions = (record) => {
+  const type = record.type
+  const options = []
+
+  if (type === 'boolean') {
+    options.push({
+      label: record.falseText,
+      value: record.falseValue,
+    },{
+      label: record.trueText,
+      value: record.trueValue,
+    });
+  }
+
+  return options;
+}
+
 const queryPluginConfig = (id: string, update: boolean = true) => {
     getPluginConfig(id).then((res) => {
         if (res.success) {
@@ -294,6 +312,7 @@ const queryPluginConfig = (id: string, update: boolean = true) => {
                     name: item.property,
                     type: item.type?.type || 'string',
                     rules: getRules(item),
+                    options: handleOptions(item.type)
                 };
             });
         }
