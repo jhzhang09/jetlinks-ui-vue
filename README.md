@@ -23,6 +23,12 @@ pnpm dev
 pnpm build
 ```
 
+## 修改tsconfig,将子模块的别名写入paths中
+```shell
+
+pnpm update:tsconfig
+```
+
 ## 依赖包
 
 ### @jetlinks-web/components
