@@ -26,3 +26,5 @@ apps
 *.sln
 *.sw?
 .history
+# 插件生成文件不需要提交
+tsconfig.paths.json
