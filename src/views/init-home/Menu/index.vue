@@ -89,6 +89,13 @@ const filterMenu = (
         return permissions.includes(pItem);
       });
     }
+    if (item.buttons?.length) {
+      item.buttons = item.buttons.filter((bItem: Record<string, any>) => {
+        return bItem.permissions.some((permission: any) => {
+          return permissions.includes(permission.permission)
+        })
+      })
+    }
     if (item.children) {
       item.children = filterMenu(permissions, item.children, hasProtocol);
     }
