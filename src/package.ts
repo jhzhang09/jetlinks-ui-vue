@@ -64,6 +64,7 @@ export const initAxios = () => {
                 '/authorize/login',
                 '/application/',
                 '/application/sso/_all',
+                '/personal/token/',
             ],
             handleError: (description, key, err) => {
                 if (!err.config?.hiddenError) {
