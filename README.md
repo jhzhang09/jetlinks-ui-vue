@@ -2,31 +2,48 @@
 
 [更新说明](./changelog.md)
 
-## 运行
+## 重要说明
+推荐使用`SSH`协议拉取代码，因为 .gitmodules 文件中已经使用了 SSH 地址（例如：git@github.com:xxx/xxx.git）。
 
-使用pnpm命令运行，安装[pnpm](https://www.pnpm.cn/installation)
+但如果你使用`HTTPS`协议 拉取主项目，会出现问题：
+Git 在拉取子模块时仍然使用`SSH`地址，这会导致出错或卡住，特别是在没有配置`SSH`密钥的情况下。
+
+**这是因为主项目用的是 HTTPS，而子模块还是 SSH，两种协议混在一起容易出问题，比如权限不一致或认证失败。**
+
+## 运行以及安装步骤
+推荐使用pnpm命令运行该项目，[安装pnpm](https://www.pnpm.cn/installation)
+
+### 1. 拉取子仓库
+```shell
+pnpm modules:init
+```
+
+### 2. 安装依赖
+```shell
+pnpm install
+```
+
+### 3. 生成子tsconfig.paths.json文件
+```shell
+# 修改tsconfig,将子模块的别名写入paths中
+pnpm update:tsconfig
+```
+
+### 4. 运行
+```shell
+pnpm dev
+```
+- 运行完成之后在浏览器访问`http://localhost:9100`即可
+
+### 5. 其它指令
 
 ```shell
-# 拉取子仓库
-pnpm modules:init
 
 # 更新子仓库
 pnpm modules:update
 
-# 安装依赖
-pnpm install
-
-# 运行
-pnpm dev
-
 # 打包
 pnpm build
-```
-
-## 修改tsconfig,将子模块的别名写入paths中
-```shell
-
-pnpm update:tsconfig
 ```
 
 ## 依赖包
