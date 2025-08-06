@@ -22,13 +22,18 @@ pnpm modules:init
 pnpm install
 ```
 
-### 3. 运行
+### 3.修改tsconfig,将子模块的别名写入paths中
+```shell
+pnpm update:tsconfig
+```
+
+### 4. 运行
 ```shell
 pnpm dev
 ```
 - 运行完成之后在浏览器访问`http://localhost:9100`即可
 
-### 4. 其它指令
+### 5. 其它指令
 
 ```shell
 # 修改tsconfig,将子模块的别名写入paths中
