@@ -17,6 +17,9 @@ import FormItemValue from './FormItem'
 import { TimeSelect } from './Dashboard/components'
 import FullCalendar from './FullCalendar/index.vue'
 import Image from './Image/index.vue'
+import EditDialog from './EditDialog/index.vue'
+import CrudTable from './CrudTable/index.vue'
+import MetadataValueItem from './MetadataValueItem/index.vue'
 import VirtualScroll from './VirtualScroll/index.vue'
 
 export default {
@@ -41,6 +44,9 @@ export default {
           .component(TimeSelect.name, TimeSelect)
           .component('FullCalendar', FullCalendar)
           .component('Image', Image)
+          .component('EditDialog', EditDialog)
+          .component('CrudTable', CrudTable)
+          .component('MetadataValueItem', MetadataValueItem)
           .component('VirtualScroll', VirtualScroll)
 
         Object.keys(FormItemValue).forEach(key => {
