@@ -95,8 +95,7 @@
 import {useI18n} from "vue-i18n";
 import {handleFuncValue} from "@/components/CrudTable/utils";
 import {omit} from "lodash-es";
-// import {useTableSelection} from '@jetlinks-web/components/es/ProTable/hooks'
-import {useTableSelection} from '../../../../../packages/components/src/ProTable/hooks'
+import {useTableSelection} from '@jetlinks-web/components/es/ProTable/hooks'
 
 const props = defineProps({
   rowKey: {
