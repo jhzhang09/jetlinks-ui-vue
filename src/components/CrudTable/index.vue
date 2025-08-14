@@ -93,106 +93,11 @@
 
 <script setup>
 import {useI18n} from "vue-i18n";
-import {handleFuncValue} from "@/components/CrudTable/utils";
+import {crudTableProps, handleFuncValue} from "./utils";
 import {omit} from "lodash-es";
 import {useTableSelection} from '@jetlinks-web/components/es/ProTable/hooks'
 
-const props = defineProps({
-  rowKey: {
-    type: [String, Function],
-    default: 'id',
-  },
-  target: {
-    type: String,
-    default: undefined
-  },
-  columns: {
-    type: Array,
-    default: () => []
-  },
-  request: {
-    type: Function,
-    default: undefined
-  },
-  defaultParams: {
-    type: Object,
-    default: () => ({})
-  },
-  permission: {
-    type: String
-  },
-  modeValue: {
-    type: String,
-    default: 'CARD'
-  },
-  mode: {
-    type: String,
-    default: undefined
-  },
-  actions: {
-    type: Array,
-    default: () => []
-  },
-  gridColumns: {
-    type: Array,
-    default: () => [4]
-  },
-  schema: {
-    type: Array,
-    default: []
-  },
-  contentList: {
-    type: Function
-  },
-  updateRequest: {
-    type: Function,
-    default: undefined
-  },
-  handleRequestData: {
-    type: Function,
-    default: undefined
-  },
-  deleteRequest: {
-    type: Function,
-    default: undefined
-  },
-  statusText: {
-    type: [Function, String],
-    default: undefined
-  },
-  status: {
-    type: [Function, String],
-    default: undefined
-  },
-  imgUrl: {
-    type: [Function, String],
-    default: undefined
-  },
-  statusNames: {
-    type: Object,
-    default: () => ({'default': 'default'})
-  },
-  showView: {
-    type: Boolean,
-    default: true
-  },
-  showEdit: {
-    type: Boolean,
-    default: true
-  },
-  showDelete: {
-    type: Boolean,
-    default: true
-  },
-  showAdd: {
-    type: Boolean,
-    default: true
-  },
-  showSelect: {
-    type: Boolean,
-    default: false
-  },
-})
+const props = defineProps({...crudTableProps})
 
 const emits = defineEmits(['itemClick'])
 
@@ -207,10 +112,9 @@ const current = reactive({
   data: {}
 })
 
-const isCheck = computed(() => props.showSelect)
-
-const {selectedRowKeys, selectedRows} = useTableSelection({isCheck: isCheck})
-
+const isCheck = computed(() => {
+  return props.showSelect
+})
 
 const _slots = computed(() => {
   return omit(slots, ['headerLeftRender', 'card', 'actions'])
@@ -218,7 +122,7 @@ const _slots = computed(() => {
 
 const _actions = computed(() => {
   const arr = []
-  if(props.showView){
+  if (props.showView) {
     arr.push({
       key: 'view',
       text: $t('CrudTable.index.150716-0'),
@@ -232,7 +136,7 @@ const _actions = computed(() => {
       },
     })
   }
-  if(props.showEdit){
+  if (props.showEdit) {
     arr.push({
       key: 'update',
       text: $t('CrudTable.index.150716-2'),
@@ -247,7 +151,7 @@ const _actions = computed(() => {
     })
   }
   arr.push(...props.actions)
-  if(props.showDelete){
+  if (props.showDelete) {
     arr.push({
       key: 'delete',
       text: $t('CrudTable.index.150716-3'),
@@ -258,9 +162,9 @@ const _actions = computed(() => {
       popConfirm: {
         title: $t('CrudTable.index.150716-4'),
         onConfirm: async (data) => {
-          if(props.deleteRequest){
+          if (props.deleteRequest) {
             const res = await props.deleteRequest(data.id);
-            if(res.success){
+            if (res.success) {
               tableRef.value.reload?.()
             }
           }
@@ -271,6 +175,8 @@ const _actions = computed(() => {
   }
   return arr
 })
+
+const {selectedRowKeys, selectedRows} = useTableSelection({isCheck: isCheck})
 
 const handleSearch = (e) => {
   params.value = e;
