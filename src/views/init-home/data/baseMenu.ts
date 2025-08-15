@@ -22,6 +22,7 @@ export const USER_CENTER_MENU_DATA = {
     owner: 'iot',
     options: {
         show: true,
+        builtIn: true
     },
     permissions: [
         {

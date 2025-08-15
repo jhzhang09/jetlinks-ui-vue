@@ -120,6 +120,7 @@ const dealMenu = (data: any) => {
     item.options = Object.assign(
       {
         show: true,
+        builtIn: true
       },
       item?.options || {},
     );
