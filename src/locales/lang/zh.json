@@ -605,5 +605,14 @@
   "init-home.index.011072-21": "MQTT产品",
   "init-home.index.011072-22": "MQTT设备",
   "init-home.index.011072-23": "初始化数据",
-  "init-home.index.011072-24": "初始化设备接入示例数据"
+  "init-home.index.011072-24": "初始化设备接入示例数据",
+  "CrudTable.index.150716-0": "查看",
+  "CrudTable.index.150716-1": "新增",
+  "CrudTable.index.150716-2": "编辑",
+  "CrudTable.index.150716-3": "删除",
+  "CrudTable.index.150716-4": "确认删除?",
+  "MetadataValueItem.index.6754398-1": "请输入",
+  "MetadataValueItem.index.6754398-2": "请选择",
+  "MetadataValueItem.index.6754398-3": "请输入数组",
+  "MetadataValueItem.index.6754398-4": "请输入对象"
 }

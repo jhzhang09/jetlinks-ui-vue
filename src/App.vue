@@ -5,6 +5,7 @@
     :IconConfig="{
       scriptUrl: '//at.alicdn.com/t/c/font_4035907_e2upz5fi7ew.js'
     }"
+    :theme="themeConfig"
   >
     <router-view/>
   </ConfigProvider>
@@ -37,23 +38,22 @@ const componentsLocale = {
 // 为公共hooks提供权限校验方法
 const { hasPermission } = useAuthStore();
 
+const themeConfig = {
+  token: theme
+}
+
 provide(ComponentsEnum.Permission, { hasPermission })
 
-ConfigProvider.config({
-  theme: theme,
-})
-
 initPackages()
+
+window.addEventListener('vite:preloadError', (event) => {
+  console.error('资源版本不对，请清除浏览器缓存')
+})
 
 watch(() => JSON.stringify(route.query || {}), () => {
   if (route.query.token) {
     setToken(route.query.token as string)
   }
 }, { immediate: true })
-
-window.addEventListener('vite:preloadError', (event) => {
-    console.error('资源版本不对，请清除浏览器缓存')
-})
-
 </script>
 <style scoped></style>
