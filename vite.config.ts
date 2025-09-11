@@ -16,12 +16,14 @@ import {
   copyImagesPlugin,
 } from './configs/plugin'
 import { federation } from '@jetlinks-web/vite'
+import customTheme from './configs/theme'
+import { antdLegacyVarsPlugin } from './configs/plugin/antd-legacy-vars-plugin'
+
 
 const {defaultAlgorithm, defaultSeed} = theme;
 
-const mapToken = defaultAlgorithm(defaultSeed);
+const mapToken = defaultAlgorithm({...defaultSeed, ...customTheme});
 const v3Token = convertLegacyToken(mapToken);
-
 // https://vitejs.dev/config/
 export default defineConfig(({mode}) => {
 
@@ -80,6 +82,7 @@ export default defineConfig(({mode}) => {
       vue(),
       vueJsx(),
       VueSetupExtend(),
+      antdLegacyVarsPlugin(),
       monacoEditorPlugin({
         languageWorkers: ['editorWorkerService', 'json', 'typescript']
       }),
