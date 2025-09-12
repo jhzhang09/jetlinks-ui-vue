@@ -1,26 +1,61 @@
 /**
  * 模块注册中心
  * 用于统一管理各个子模块的 API、组件、工具函数等资源
+ * 支持微前端和模块联邦
  */
-
-// 导入类型定义
-import type { ModuleResource, RegisterOptions } from '@/types/module-registry.d';
+import type { ModuleResource, RegisterOptions } from '@/types/module-registry.d'
+import { dynamicRemoteManager } from '@jetlinks-web/vite/dist/dynamic-remote'
+import { isSubApp } from '@/utils/consts'
 
 // 注册表存储所有模块的资源
 const moduleRegistryMap = new Map<string, ModuleResource>();
+const remoteFileName = 'remoteEntry'
+
+// 模块状态枚举
+export enum ModuleStatus {
+  IDLE = 'idle',
+  LOADING = 'loading',
+  LOADED = 'loaded',
+  REGISTERED = 'registered',
+  ERROR = 'error'
+}
+
+// 模块元数据接口
+export interface ModuleMetadata {
+  moduleId: string
+  status: ModuleStatus
+  loadTime?: number
+  registerTime?: number
+  version?: string
+  source: 'local' | 'federation' | 'micro-app'
+  dependencies?: string[]
+  error?: Error
+}
 
 export class ModuleRegistry {
   private static instance: ModuleRegistry;
   private registry = moduleRegistryMap;
+  private metadata = new Map<string, ModuleMetadata>();
 
-  private constructor() {}
+  private constructor() {
+
+  }
 
   /**
    * 获取注册中心实例（单例）
    */
   public static getInstance(): ModuleRegistry {
     if (!ModuleRegistry.instance) {
-      ModuleRegistry.instance = new ModuleRegistry();
+      if (isSubApp) { // 子模块时，实例对象用父应用的注册中心
+        const globalData = (window as any).microApp.getGlobalData() as { api: Record<string, any>}
+        if (globalData && globalData.api) {
+          ModuleRegistry.instance = globalData.api.moduleRegistry
+        } else {
+          ModuleRegistry.instance = new ModuleRegistry();
+        }
+      } else {
+        ModuleRegistry.instance = new ModuleRegistry();
+      }
     }
     return ModuleRegistry.instance;
   }
@@ -32,16 +67,21 @@ export class ModuleRegistry {
    * @param options 注册选项
    */
   public register(
-    moduleId: string, 
-    resource: Partial<ModuleResource>, 
+    moduleId: string,
+    resource: Partial<ModuleResource>,
     options: RegisterOptions = {}
   ): void {
     if (!moduleId) {
       throw new Error('模块ID不能为空');
     }
 
+    if (!resource || (resource && !Object.keys(resource).length)) {
+      console.warn(`没有可注册内容，resource:`, resource);
+      return
+    }
+
     const { override = false } = options;
-    
+
     // 检查模块是否已存在
     if (this.registry.has(moduleId) && !override) {
       console.warn(`模块 ${moduleId} 已存在，使用 override: true 来覆盖`);
@@ -56,7 +96,14 @@ export class ModuleRegistry {
     };
 
     this.registry.set(moduleId, mergedResource);
-    
+
+    // 更新模块元数据
+    this.updateMetadata(moduleId, {
+      status: ModuleStatus.REGISTERED,
+      registerTime: Date.now(),
+      source: this.detectSource(resource)
+    });
+
     console.log(`模块 ${moduleId} 注册成功`);
   }
 
@@ -79,11 +126,11 @@ export class ModuleRegistry {
 
     const existingModule = this.registry.get(moduleId) || ({ moduleId } as ModuleResource);
     const existingResources = existingModule[resourceType] || {};
-    
+
     const { override = false } = options;
-    
+
     // 合并资源
-    const mergedResources = override 
+    const mergedResources = override
       ? { ...existingResources, ...resources }
       : { ...resources, ...existingResources };
 
@@ -93,7 +140,7 @@ export class ModuleRegistry {
     };
 
     this.registry.set(moduleId, updatedModule);
-    
+
     console.log(`模块 ${moduleId} 的 ${String(resourceType)} 资源注册成功`);
   }
 
@@ -113,17 +160,17 @@ export class ModuleRegistry {
    * @returns 资源对象或undefined
    */
   public getResource<T = any>(
-    moduleId: string, 
+    moduleId: string,
     resourceType: keyof ModuleResource
   ): Record<string, T> | undefined {
     const module = this.registry.get(moduleId);
     const resource = module?.[resourceType];
-    
+
     // 如果 resourceType 是 'routes'，则可能不是 Record 类型
     if (resourceType === 'routes') {
       return resource as any;
     }
-    
+
     return resource as Record<string, T> | undefined;
   }
 
@@ -171,8 +218,8 @@ export class ModuleRegistry {
    * @returns boolean
    */
   public hasResourceItem(
-    moduleId: string, 
-    resourceType: keyof ModuleResource, 
+    moduleId: string,
+    resourceType: keyof ModuleResource,
     resourceName: string
   ): boolean {
     const resources = this.getResource(moduleId, resourceType);
@@ -252,7 +299,7 @@ export class ModuleRegistry {
       } catch (error) {
         failedModules.push(moduleId);
         console.error(`模块 ${moduleId} 注册失败:`, error);
-        
+
         if (!allowPartialFailure) {
           throw new Error(`批量注册失败，模块 ${moduleId} 注册出错`);
         }
@@ -296,28 +343,128 @@ export class ModuleRegistry {
 
     return matchingModules;
   }
+
+  /**
+   * 检测资源来源
+   */
+  private detectSource(resource: Partial<ModuleResource>): 'local' | 'federation' | 'micro-app' {
+    // 简单的来源检测逻辑
+    if ((resource as any).federation) return 'federation';
+    if ((resource as any).microApp) return 'micro-app';
+    return 'local';
+  }
+
+  /**
+   * 更新模块元数据
+   */
+  public updateMetadata(moduleId: string, updates: Partial<ModuleMetadata>): void {
+    const existing = this.metadata.get(moduleId) || {
+      moduleId,
+      status: ModuleStatus.IDLE,
+      source: 'local'
+    };
+
+    const updated: ModuleMetadata = { ...existing, ...updates };
+    this.metadata.set(moduleId, updated);
+  }
+
+  /**
+   * 获取模块元数据
+   */
+  public getMetadata(moduleId: string): ModuleMetadata | undefined {
+    return this.metadata.get(moduleId);
+  }
+
+  /**
+   * 获取所有模块元数据
+   */
+  public getAllMetadata(): Map<string, ModuleMetadata> {
+    return new Map(this.metadata);
+  }
+
+
+  /**
+   * 处理模块卸载
+   */
+  public handleModuleUnload(moduleId: string): void {
+    // 更新状态
+    this.updateMetadata(moduleId, {
+      status: ModuleStatus.IDLE
+    });
+
+    console.log(`模块 ${moduleId} 已卸载`);
+  }
+
+  /**
+   * 计算平均加载时间
+   */
+  private calculateAverageLoadTime(): number {
+    const loadedModules = Array.from(this.metadata.values())
+      .filter(m => m.loadTime && m.registerTime);
+
+    if (loadedModules.length === 0) return 0;
+
+    const totalTime = loadedModules.reduce((sum, m) =>
+      sum + ((m.registerTime || 0) - (m.loadTime || 0)), 0
+    );
+
+    return totalTime / loadedModules.length;
+  }
+
+  /**
+   * 按状态分组模块
+   */
+  private groupModulesByStatus(): Record<ModuleStatus, string[]> {
+    const result = {
+      [ModuleStatus.IDLE]: [] as string[],
+      [ModuleStatus.LOADING]: [] as string[],
+      [ModuleStatus.LOADED]: [] as string[],
+      [ModuleStatus.REGISTERED]: [] as string[],
+      [ModuleStatus.ERROR]: [] as string[]
+    };
+
+    this.metadata.forEach((metadata, moduleId) => {
+      result[metadata.status].push(moduleId);
+    });
+
+    return result;
+  }
+
+  /**
+   * 重新加载模块
+   */
+  public async reloadModule(moduleId: string): Promise<void> {
+    const metadata = this.metadata.get(moduleId);
+    if (!metadata) {
+      throw new Error(`模块 ${moduleId} 不存在`);
+    }
+  }
+
+  /**
+   * 注册远程模块
+   */
+  public async loadRemoteModule(moduleId: string, path: string): Promise<void> {
+    await dynamicRemoteManager.addRemote(remoteFileName, { url: path })
+
+    const remote = await dynamicRemoteManager.loadRemoteComponent(remoteFileName, moduleId)
+    moduleRegistry.register(moduleId, remote.default || remote)
+  }
+
+  /**
+   * 注册单个远程组件
+   */
+  public async loadRemoteComponent(moduleId: string, path: string, componentName: string): Promise<void> {
+    await dynamicRemoteManager.addRemote(remoteFileName, { url: path })
+
+    const remote = await dynamicRemoteManager.loadRemoteComponent(remoteFileName, moduleId)
+    moduleRegistry.register(moduleId, {
+      components: {
+        [componentName]: remote.default || remote
+      }
+    })
+  }
+
 }
 
 // 导出单例实例
 export const moduleRegistry = ModuleRegistry.getInstance();
-
-// 便捷方法导出
-export const {
-  register,
-  registerResource,
-  getModule,
-  getResource,
-  getResourceItem,
-  hasModule,
-  hasResource,
-  hasResourceItem,
-  unregister,
-  unregisterResource,
-  getAllModuleIds,
-  getAllModules,
-  clear,
-  batchRegister,
-  searchModules
-} = moduleRegistry;
-
-export default moduleRegistry;
