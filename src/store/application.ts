@@ -50,7 +50,6 @@ export const useApplication = defineStore('application', () => {
       }
     } catch (error) {
       console.error('查询应用列表失败:', error)
-      throw error
     } finally {
       lock = false
     }
