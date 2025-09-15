@@ -19,7 +19,6 @@ import { federation } from '@jetlinks-web/vite'
 import customTheme from './configs/theme'
 import { antdLegacyVarsPlugin } from './configs/plugin/antd-legacy-vars-plugin'
 
-
 const {defaultAlgorithm, defaultSeed} = theme;
 
 const mapToken = defaultAlgorithm({...defaultSeed, ...customTheme});
@@ -32,7 +31,6 @@ export default defineConfig(({mode}) => {
   const moduleNameIndex = process.argv.indexOf('--module-name');
   const moduleName = moduleNameIndex !== -1 ? process.argv[moduleNameIndex + 1] + '-ui' : null;
 
-  console.log(__dirname)
   return {
     base: './',
     resolve: {

@@ -24,7 +24,9 @@ loadMicroApp()
 
 if (import.meta.env.VITE_MICRO_APP) {
   microApp.start({
-    iframe: true
+    iframe: true,
+    'keep-router-state': true,
+    'router-mode': 'pure'
   })
 }
 
