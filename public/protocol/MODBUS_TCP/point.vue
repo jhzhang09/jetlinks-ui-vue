@@ -87,7 +87,7 @@
         v-model:value="formData.configuration.parameter.quantity"
         :controls="false"
         :max="65535"
-        :min="1"
+        :min="minQuantity"
         :precision="0"
         :placeholder="$lang('MODBUS_TCP.point.20250207-9')"
         style="width: 100%"
@@ -272,10 +272,20 @@ const checkProviderData = {
   int16: 2,
   int32: 4,
   int64: 8,
-  ieee754_float: 2,
+  ieee754_float: 4,
   ieee754_double: 8,
   hex: 1,
 };
+
+// 计算寄存器数量的最小值
+const minQuantity = computed(() => {
+  const provider = formData.configuration.codec.provider;
+  if (!provider || !checkProviderData[provider]) {
+    return 1;
+  }
+  // 数据类型长度除以2（每个寄存器2字节）
+  return Math.ceil(checkProviderData[provider] / 2);
+});
 
 const getOptions = () => {
   request.get('/things/collector/codecs', {}).then(resp => {
@@ -378,12 +388,16 @@ const providerValueMap = {
   int16: 1,
   int32: 2,
   int64: 4,
-  ieee754_float: 2,
+  ieee754_float: 4,
   bool: 1,
 }
 
 const providerChange = (val) => {
-  formData.configuration.parameter.quantity = providerValueMap[val]
+  const minQty = Math.ceil(checkProviderData[val] / 2) || 1;
+  // 确保当前数量不小于最小值
+  if (formData.configuration.parameter.quantity < minQty) {
+    formData.configuration.parameter.quantity = minQty;
+  }
 
   if (val === 'bool') {
     formData.configuration.codec.configuration.scaleFactor = undefined;
