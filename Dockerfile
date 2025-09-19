@@ -1,4 +1,7 @@
-FROM nginx:1.20.2
+FROM nginx:alpine
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+
 ADD nginx.conf /etc/nginx/conf.d/default.conf
 ADD docker-entrypoint.sh /docker-entrypoint.sh
 COPY dist /usr/share/nginx/html
