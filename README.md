@@ -1,39 +1,49 @@
-# jetlinks-ui-vue
+# JetLinks 前端仓库
 
 [更新说明](./CHANGELOG.md)
 
-## 重要说明
-推荐使用`SSH`协议拉取代码，因为 .gitmodules 文件中已经使用了 SSH 地址（例如：git@github.com:xxx/xxx.git）。
+## 使用说明
+2.10版本开始使用git子模块方式管理代码,请使用ssh方式拉取代码.
 
-但如果你使用`HTTPS`协议 拉取主项目，会出现问题：
-Git 在拉取子模块时仍然使用`SSH`地址，这会导致出错或卡住，特别是在没有配置`SSH`密钥的情况下。
+### 1. 添加SSH Key到github
 
-**这是因为主项目用的是 HTTPS，而子模块还是 SSH，两种协议混在一起容易出问题，比如权限不一致或认证失败。**
-## 运行以及安装步骤
-推荐使用pnpm命令运行该项目，[安装pnpm](https://www.pnpm.cn/installation)
+https://github.com/settings/ssh/new
 
-### 1. 拉取子仓库
+不知道如何创建`ssh key`的可以问问AI: `github如何添加ssh key`.
+
+### 2. 拉取代码
+
 ```shell
-pnpm modules:init
+git clone --recursive git@github.com:jetlinks/jetlinks-ui-vue.git
+cd jetlinks-ui-vue
 ```
 
-### 2. 安装依赖
+### 3. 切换子模块到关联的最新分支
+```shell
+git submodule foreach git checkout $(git rev-parse --abbrev-ref HEAD)
+```
+
+### 4. 安装依赖
 ```shell
 pnpm install
 ```
 
-### 3.修改tsconfig,将子模块的别名写入paths中
+### 5.修改tsconfig,将子模块的别名写入paths中
 ```shell
 pnpm update:tsconfig
 ```
 
-### 4. 运行
+### 6. 运行
+
+1. 编辑`vite.config.ts`文件,修改后端访问地址.
+2. 执行命令
 ```shell
 pnpm dev
 ```
+
 - 运行完成之后在浏览器访问`http://localhost:9100`即可
 
-### 5. 其它指令
+### 7. 其它指令(可选)
 
 ```shell
 # 修改tsconfig,将子模块的别名写入paths中
