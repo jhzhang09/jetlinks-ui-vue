@@ -13,9 +13,8 @@ import convertLegacyToken from 'ant-design-vue/lib/theme/convertLegacyToken'
 import {
   registerModulesAlias,
   copyFile,
-  copyImagesPlugin,
 } from './configs/plugin'
-import { federation } from '@jetlinks-web/vite'
+import { federation, sharpOptimize } from '@jetlinks-web/vite'
 import customTheme from './configs/theme'
 import { antdLegacyVarsPlugin } from './configs/plugin/antd-legacy-vars-plugin'
 
@@ -105,7 +104,7 @@ export default defineConfig(({mode}) => {
       }),
       progress(),
       copyFile(mavenName),
-      copyImagesPlugin(),
+      // copyImagesPlugin(),
       federation({
         name: mavenName ? `${mavenName}` : 'host',
         remotes: {},
@@ -116,7 +115,8 @@ export default defineConfig(({mode}) => {
         exposes: mavenName ? {
           [mavenName] : `src/modules/${mavenName}/register.ts`
         } : undefined,
-      })
+      }),
+      sharpOptimize()
     ],
     server: {
       host: '0.0.0.0',
