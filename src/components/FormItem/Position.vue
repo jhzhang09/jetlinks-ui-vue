@@ -55,10 +55,10 @@ const { onOpen } = useTabSaveSuccess('system/Positions', {
   }
 })
 
-const dataMap = new Map()
+const dataMap = ref(new Map())
 const handleData = (arr) => {
   return arr.map(i => {
-    dataMap.set(i.id, i)
+    dataMap.value.set(i.id, i)
     if(i.children?.length){
       i.children = handleData(i.children)
     }
@@ -72,9 +72,10 @@ const handleData = (arr) => {
 }
 
 const _treeData = computed(() => {
+  // 查询组织树
   const arr = handleData(treeData.value || [])
   const _arr = props.extraData.filter(i => {
-    return !dataMap.get(i.id)
+    return !dataMap.value.get(i.id)
   }).map(item => {
     return {
       ...item,
@@ -102,6 +103,7 @@ watch(() => props.value, () => {
 
 onMounted(() => {
   reload()
+  dataMap.value = new Map()
 })
 </script>
 
@@ -127,7 +129,7 @@ onMounted(() => {
           <a-tooltip :title="$t('components.EditUserDialog.939453-35')"  v-else-if="disabledData.includes(record.id)">
             <span class="j-ellipsis j-ellipsis-line-clamp" style="-webkit-line-clamp: 1;">{{ record.name }}</span>
           </a-tooltip>
-          <div style="width: calc(100% - 10px) " v-else>
+          <div v-else>
             <j-ellipsis>{{ record.name }}</j-ellipsis>
           </div>
         </template>
@@ -144,9 +146,9 @@ onMounted(() => {
       </a-tree-select>
     </div>
     <j-permission-button
-        hasPermission="system/Positions:add"
+        hasPermission="system/Department:bind-position"
         @click="onOpen({save: true})"
-        v-if="!props.extraProps?.disabled && showAdd"
+        v-if="!extraProps?.disabled && showAdd"
     >
       <template #icon>
         <AIcon type="PlusOutlined"/>
@@ -164,6 +166,12 @@ onMounted(() => {
     background: #e6f7ff;
     border-color: #91d5ff;
     color: #096dd9;
+  }
+
+  :deep(.ant-select-selection-overflow-item){
+    & > span {
+      width: 100%;
+    }
   }
 }
 </style>
