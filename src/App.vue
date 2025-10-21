@@ -43,19 +43,13 @@ ConfigProvider.config({
   theme: theme,
 })
 
-const initToken = () => {
-  const q = location.href.indexOf('?')
-  if (q !== -1) {
-    const params = new URLSearchParams(location.href.substring(q))
-    const _token = params.get('token')
-    if (_token) {
-      setToken(_token)
-    }
-  }
-}
-
-initToken()
 initPackages()
+
+watch(() => JSON.stringify(route.query || {}), () => {
+  if (route.query?.token) {
+    setToken(route.query.token as string)
+  }
+}, { immediate: true })
 
 window.addEventListener('vite:preloadError', (event) => {
     console.error('资源版本不对，请清除浏览器缓存')
