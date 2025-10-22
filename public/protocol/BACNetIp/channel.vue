@@ -66,6 +66,7 @@
         v-model:value="formData.configuration.overIp.subnetAddress"
         style="width: 100%"
         :placeholder="$lang('BACNetIp.channel.20250207-8')"
+        @change="changeSubnetAddress"
     />
   </a-form-item>
   <a-form-item
@@ -96,6 +97,12 @@ const valValue = (_rule, value) => {
     return Promise.reject($lang('BACNetIp.channel.20250207-11'));
   }
   return Promise.resolve();
+}
+
+const changeSubnetAddress = (val) => {
+  if (!val?.target?.value) {
+    formData.configuration.overIp.subnetAddress = undefined
+  }
 }
 
 if (!('configuration' in formData)) {
