@@ -1,7 +1,7 @@
 // 是否不是community版本
 import { getToken, randomString, setToken } from '@jetlinks-web/utils'
 import {BASE_API} from "@jetlinks-web/constants";
-import { PersonalKey, PersonalToken } from '@/utils/consts'
+import { PersonalAIKey, PersonalKey, PersonalToken } from '@/utils/consts'
 
 export const isNoCommunity = !(localStorage.getItem('version_code') === 'community');
 
@@ -26,6 +26,7 @@ export const initPersonal = () => {
 
   if (_token) {
     PersonalToken.value = _token
+    PersonalToken.aiToken = url.searchParams.get(PersonalAIKey)
     setToken('token')
   }
 }
