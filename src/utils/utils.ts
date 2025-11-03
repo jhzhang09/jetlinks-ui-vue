@@ -20,7 +20,6 @@ export class TabSaveSuccess {
 }
 
 export const initPersonal = () => {
-  debugger
   const url = new URL(window.location.href);
   const _token = url.searchParams.get(PersonalKey)
 
