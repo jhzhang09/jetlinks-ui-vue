@@ -217,9 +217,7 @@ const processRedirectUrl = (urlString) => {
       urlObject.searchParams.set(PersonalKey, token)
     }
   }
-  debugger
-  return `http://localhost:9100/${urlObject.search}${urlObject.hash}`
-  // return urlObject.toString()
+  return urlObject.toString()
 }
 
 const handleSubmit = async () => {
