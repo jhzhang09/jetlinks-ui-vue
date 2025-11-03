@@ -214,11 +214,18 @@ const processRedirectUrl = (urlString) => {
     urlObject.searchParams.delete(PersonalUrlKey)
 
     if (!urlObject.searchParams.has(PersonalAIKey)) {
-      const aiToken = urlObject.searchParams.get(PersonalAIKey)
+      const url = new URL(location.href)
+      const aiToken = url.searchParams.get(PersonalAIKey)
       urlObject.searchParams.set(PersonalAIKey, aiToken)
       PersonalToken.aiToken = aiToken
     }
+
+    if (!urlObject.searchParams.has(PersonalKey)) {
+      urlObject.searchParams.set(PersonalKey, token)
+    }
   }
+
+  // return `http://localhost:9101/${urlObject.search}${urlObject.hash}`
   return urlObject.toString()
 }
 
