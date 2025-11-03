@@ -30,3 +30,8 @@ export const MODULES_KEYS: string[] = import.meta.env.VITE_BUILD_MODULES || [];
 export const isSubApp = (window as any).__MICRO_APP_ENVIRONMENT__
 
 export const OpenMicroApp = import.meta.env.VITE_MICRO_APP
+
+export const PersonalKey = import.meta.env.VITE_PERSONAL_TOKEN_KEY
+export const PersonalUrlKey = import.meta.env.VITE_PERSONAL_TOKEN_URL_KEY
+
+export const PersonalToken: { value: string} = { value: undefined}

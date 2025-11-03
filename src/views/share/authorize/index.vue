@@ -126,9 +126,8 @@ import { getTokenConfig, getTokenRedirect } from '@/api/comm'
 import { codeUrl } from '@/api/login'
 import { useRequest } from '@jetlinks-web/hooks'
 import { encrypt, LocalStore, onlyMessage } from '@jetlinks-web/utils'
+import { PersonalKey, PersonalUrlKey, PersonalToken } from '@/utils/consts'
 
-const PERSONAL_TOKEN_KEY = 'X-Personal-Token'
-const PERSONAL_TOKEN_URL_KEY = ':X_Personal_Token'
 const ERROR_MESSAGES = {
   MISSING_TOKEN: '缺少必要的授权参数',
   AUTH_SUCCESS: '授权成功，正在跳转...'
@@ -136,7 +135,7 @@ const ERROR_MESSAGES = {
 
 const formRef = ref(null)
 const config = ref({})
-const personalToken = ref('')
+const _personalToken = ref('')
 const isLoading = ref(false)
 const isSubmitting = ref(false)
 const isExpired = ref(false)
@@ -177,10 +176,11 @@ const { run: refreshVerificationCode } = useRequest(codeUrl, {
 const handleRedirect = async (params) => {
   try {
     isSubmitting.value = true
-    const response = await getTokenRedirect(personalToken.value, params || {})
+    const response = await getTokenRedirect(_personalToken.value, params || {})
 
     if (response?.result) {
       const redirectUrl = processRedirectUrl(response.result)
+
       if (params) {
         onlyMessage(ERROR_MESSAGES.AUTH_SUCCESS)
         setTimeout(() => {
@@ -206,14 +206,20 @@ const handleRedirect = async (params) => {
 
 const processRedirectUrl = (urlString) => {
   const urlObject = new URL(urlString)
-  const token = urlObject.searchParams.get(PERSONAL_TOKEN_URL_KEY)
+  const token = urlObject.searchParams.get(PersonalUrlKey)
 
   if (token) {
-    LocalStore.set(PERSONAL_TOKEN_KEY, token)
-    urlObject.searchParams.delete(PERSONAL_TOKEN_URL_KEY)
-  }
+    LocalStore.set(PersonalKey, token)
+    PersonalToken.value = token
+    urlObject.searchParams.delete(PersonalUrlKey)
 
-  return urlObject.toString()
+    if (!urlObject.searchParams.has(PersonalKey)) {
+      urlObject.searchParams.set(PersonalKey, token)
+    }
+  }
+  debugger
+  return `http://localhost:9100/${urlObject.search}${urlObject.hash}`
+  // return urlObject.toString()
 }
 
 const handleSubmit = async () => {
@@ -248,16 +254,16 @@ const buildAuthParameters = () => {
 const initialize = async () => {
   try {
     const urlParams = new URLSearchParams(window.location.search)
-    personalToken.value = urlParams.get('personal_token')
+    _personalToken.value = urlParams.get('personal_token')
 
-    if (!personalToken.value) {
+    if (!_personalToken.value) {
       onlyMessage(ERROR_MESSAGES.MISSING_TOKEN, 'error')
       isExpired.value = true
       return
     }
 
     isLoading.value = true
-    await getTokenConfig(personalToken.value)
+    await getTokenConfig(_personalToken.value)
       .then(async (res) => {
         config.value = res.result
 
