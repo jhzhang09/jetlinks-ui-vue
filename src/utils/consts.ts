@@ -35,4 +35,4 @@ export const PersonalKey = import.meta.env.VITE_PERSONAL_TOKEN_KEY
 export const PersonalUrlKey = import.meta.env.VITE_PERSONAL_TOKEN_URL_KEY
 export const PersonalAIKey = import.meta.env.VITE_PERSONAL_TOKEN_AI_KEY
 
-export const PersonalToken: { value: string} = { value: undefined, aiToken}
+export const PersonalToken: { value?: string, aiToken?: string} = { value: undefined, aiToken: undefined}
