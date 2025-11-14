@@ -112,6 +112,51 @@ pbcopy < ~/.ssh/id_rsa.pub
 ssh -T git@github.com
 ```
 
+### Download ZIP 方式获取源码，拉取子仓库方式
+
+手动下载子模块步骤
+
+#### 1. 打开主项目下载的文件夹，例如：
+```css
+your-project/
+├─ src/
+├─ modules/
+│  ├─ authentication-manager-ui/    ← 这个是空的！
+│  ├─ device-manager-ui/            ← 这个是空的！
+│  ├─ notify-manager-ui/            ← 这个是空的！
+└─ .gitmodules
+
+```
+
+##### 2.根据 .gitmodules 文件提示，到对应仓库页面下载 ZIP：比如 .gitmodules 中写着
+
+```in
+[submodule "src/modules/rule-engine-manager-ui"]
+	path = src/modules/rule-engine-manager-ui
+	url = git@github.com:jetlinks-v2/rule-engine-manager-ui.git
+[submodule "src/modules/notify-manager-ui"]
+	path = src/modules/notify-manager-ui
+	url = git@github.com:jetlinks-v2/notify-manager-ui.git
+[submodule "src/modules/device-manager-ui"]
+	path = src/modules/device-manager-ui
+	url = git@github.com:jetlinks-v2/device-manager-ui.git
+[submodule "src/modules/authentication-manager-ui"]
+	path = src/modules/authentication-manager-ui
+	url = git@github.com:jetlinks-v2/authentication-manager-ui.git
+```
+#### 3.解压 ZIP 并放到对应路径
+
+#### 4.确保目录完整
+
+```css
+your-project/
+├─ modules/
+│  ├─ authentication-manager-ui/
+│  │  ├─ package.json
+│  │  ├─ src/
+│  │  └─ ...
+
+```
 
 ## 三、运行以及安装步骤
 使用 **pnpm** 命令运行该项目，[安装pnpm](https://www.pnpm.cn/installation)
