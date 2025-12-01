@@ -125,8 +125,8 @@ jobs:
                       <servers>
                         <server>
                           <id>jetlinks</id>
-                          <username>\${{ secrets.MAVEN_USERNAME }}</username>
-                          <password>\${{ secrets.MAVEN_PASSWORD }}</password>
+                          <username>${{ secrets.MAVEN_USERNAME }}</username>
+                          <password>${{ secrets.MAVEN_PASSWORD }}</password>
                         </server>
                       </servers>
                     </settings>
