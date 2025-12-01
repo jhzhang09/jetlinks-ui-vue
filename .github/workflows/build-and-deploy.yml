@@ -22,7 +22,7 @@ on:
 
 env:
     REGISTRY: registry.cn-shenzhen.aliyuncs.com
-    IMAGE_NAME: jetlinks/jetlinks-ui-vue
+    IMAGE_NAME: jetlinks/jetlinks-community-ui
 
 jobs:
     build:
