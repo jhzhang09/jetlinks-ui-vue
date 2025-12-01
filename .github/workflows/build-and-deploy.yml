@@ -40,25 +40,22 @@ jobs:
                     BRANCH_NAME="${{ github.ref_name }}"
                     echo "Current branch: $BRANCH_NAME"
 
-                    # 初始化子模块（不更新，只初始化）
+                    # 初始化子模块
                     git submodule init
 
-                    # 设置子模块远程地址为 HTTPS（将 SSH URL 转换为 HTTPS URL）
-                    echo "Converting submodule remote URLs from SSH to HTTPS..."
-                    git submodule foreach --recursive "
-                      # 获取当前远程 URL
-                      CURRENT_URL=\$(git config remote.origin.url)
-                      echo \"Submodule \$sm_path: Current URL = \$CURRENT_URL\"
+                    # 先转换 .gitmodules 中的 SSH URL 为 HTTPS URL（在更新之前）
+                    echo "Converting .gitmodules URLs from SSH to HTTPS..."
+                    if [ -f .gitmodules ]; then
+                      sed -i.bak 's|git@github.com:\([^/]*\)/\(.*\)\.git|https://github.com/\1/\2.git|g' .gitmodules
+                      rm -f .gitmodules.bak
+                    fi
 
-                      # 如果是 SSH URL，转换为 HTTPS URL
-                      if echo \"\$CURRENT_URL\" | grep -q '^git@github.com:'; then
-                        HTTPS_URL=\$(echo \"\$CURRENT_URL\" | sed 's|git@github.com:\(.*\)|https://github.com/\1|')
-                        echo \"  Converting to: \$HTTPS_URL\"
-                        git remote set-url origin \"\$HTTPS_URL\"
-                      else
-                        echo \"  Already HTTPS URL, skipping\"
-                      fi
-                    "
+                    # 同步子模块配置
+                    git submodule sync --recursive
+
+                    # 更新子模块（现在使用 HTTPS URL）
+                    echo "Updating submodules..."
+                    git submodule update --recursive --init
 
                     # 切换子模块到指定分支并拉取最新代码
                     echo "Switching submodules to branch: $BRANCH_NAME"
