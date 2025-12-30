@@ -102,9 +102,9 @@ jobs:
 
             -   name: Build frontend for Maven (BASE_API=/)
                 run: |
-                    VITE_APP_BASE_API=/ pnpm build
+                    VITE_APP_BASE_API= pnpm build
                 env:
-                    VITE_APP_BASE_API: /
+                    VITE_APP_BASE_API: null
 
             -   name: Setup Java and Maven
                 uses: actions/setup-java@v4
