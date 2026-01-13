@@ -88,7 +88,11 @@ const reset = () => {
   searchRef.value?.reset?.()
 }
 
-defineExpose({ reset })
+const setValues = (data) => {
+  searchRef.value?.setValues?.(data)
+}
+
+defineExpose({ reset, setValues })
 </script>
 
 <style scoped lang='less'>
