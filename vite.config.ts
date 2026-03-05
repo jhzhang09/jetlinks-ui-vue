@@ -40,7 +40,7 @@ export default defineConfig(({ mode }) => {
   const mavenName = moduleNameIndex !== -1 ? process.argv[moduleNameIndex + 1] : null
 
   return {
-    base: './',
+    base: '/',
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
