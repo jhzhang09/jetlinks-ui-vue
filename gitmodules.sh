@@ -3,8 +3,9 @@ set -euo pipefail
 
 # 子仓库已通过 Git subtree 内嵌于主仓库；本脚本从各上游仓库拉取与当前主分支对应分支的更新。
 
-# 获取主仓库当前分支
-main_branch=$(git symbolic-ref --short HEAD)
+# 获取要同步的上游分支。
+# 本地默认使用主仓库当前分支；CI 会在临时分支上执行，因此优先使用外部传入的 SYNC_BRANCH。
+main_branch="${SUBTREE_BRANCH:-${SYNC_BRANCH:-$(git symbolic-ref --short HEAD)}}"
 
 # 如果是dev，就使用master，否则用当前分支
 if [[ "$main_branch" = "dev" || "$main_branch" = "master" ]]; then

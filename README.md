@@ -121,7 +121,7 @@ ssh -T git@github.com
 ```shell
 pnpm modules:update
 ```
-（需已配置 SSH，且会按当前主仓库分支名对应上游分支执行 `git subtree pull`。）
+（需已配置 SSH，且会按当前主仓库分支名对应上游分支执行 `git subtree pull`；CI 会显式传入 `2.11`。）
 
 ### 2. 安装依赖
 确认 `src/modules` 下各目录存在后再安装依赖

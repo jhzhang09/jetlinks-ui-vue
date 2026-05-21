@@ -54,7 +54,7 @@ jobs:
           SYNC_BRANCH="${{ env.SYNC_BRANCH }}"
           BR="automated/subtree-sync-$(echo "$SYNC_BRANCH" | tr '/' '-')-${{ github.run_id }}"
           git checkout -b "$BR"
-          bash ./gitmodules.sh
+          SUBTREE_BRANCH="$SYNC_BRANCH" bash ./gitmodules.sh
           echo "branch=$BR" >> "$GITHUB_OUTPUT"
           AHEAD=$(git rev-list --count "origin/$SYNC_BRANCH"..HEAD)
           echo "ahead=$AHEAD" >> "$GITHUB_OUTPUT"
