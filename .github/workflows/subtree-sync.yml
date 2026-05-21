@@ -9,8 +9,8 @@ name: Subtree sync
 
 on:
   schedule:
-    # 每周一 02:00 UTC（北京时间每周一 10:00）
-    - cron: '0 2 * * 1'
+    # 每周一 00:15 UTC（北京时间每周一 08:15）
+    - cron: '15 0 * * 1'
   workflow_dispatch:
     inputs:
       base_branch:
